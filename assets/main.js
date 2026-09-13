@@ -1,0 +1,750 @@
+/* ============ 智选 XuanPinHub · 交互逻辑 ============ */
+
+/* ---------- 演示数据 ---------- */
+const PRODUCTS = [
+  {id:1, name:'磁吸无线充电宝', cat:'数码3C', emoji:'🔋', img:'1511707171634-5f897ff02aa9', heat:96, sales:85000, margin:42, comp:'高', compScore:86, trend:35, searchVol:88,
+   t:[40,44,47,53,58,62,66,71,76,82,89,96],
+   sell:'磁吸+快充+轻薄,通勤出行刚需,复购与礼赠属性强',
+   reason:'搜索热度连续 12 个月上升, iPhone 用户的强刚需配件。虽然竞争激烈,但市场足够大,差异化(容量/超薄/自带线)仍有入场机会。',
+   risk:'含锂电池:跨境需 MSDS / UN38.3 航空认证;注意规避 MagSafe 商标表述。'},
+  {id:2, name:'宠物自动喂食器', cat:'宠物用品', emoji:'🐾', img:'1514888286974-6c03e2ca1dba', heat:92, sales:42000, margin:48, comp:'中', compScore:58, trend:58, searchVol:76,
+   t:[35,38,42,45,50,54,59,66,72,79,86,92],
+   sell:'定时定量+摄像头互动,解决加班/出差喂猫痛点',
+   reason:'「它经济」持续爆发,智能宠物用品增速超 50%,客单价 200-400 元利润空间足,头部品牌垄断度还不高。',
+   risk:'需 3C 认证;电子产品售后率高于普通品类,建议预留 3% 换新成本。'},
+  {id:3, name:'筋膜枪按摩仪', cat:'户外运动', emoji:'💆', img:'1518611012118-696072aa579a', heat:89, sales:56000, margin:45, comp:'高', compScore:82, trend:22, searchVol:82,
+   t:[55,56,58,60,63,66,70,74,78,83,86,89],
+   sell:'运动恢复场景成熟,价格带已下探至百元内',
+   reason:'需求稳定且大众化,但红海明显:头部价格战激烈。建议做细分人群(颈肩mini款/深层大功率)或礼盒装差异化。',
+   risk:'带锂电池需认证;宣传"治疗/理疗"功效有合规风险,只能说按摩放松。'},
+  {id:4, name:'便携榨汁杯', cat:'厨房用品', emoji:'🥤', img:'1553530666-ba11a7da3888', heat:88, sales:63000, margin:51, comp:'中', compScore:60, trend:30, searchVol:70,
+   t:[46,49,52,54,57,60,64,68,73,79,84,88],
+   sell:'办公室/健身房即时榨汁,清洗简单是核心卖点',
+   reason:'夏季旺季刚过但全年需求平稳,毛利率 50%+。差异化方向:大容量、无线充电、婴儿辅食场景。',
+   risk:'刀头+充电结构,注意防水等级与儿童安全锁;跨境需食品级材料认证(FDA/LFGB)。'},
+  {id:5, name:'冰丝凉感睡衣', cat:'家居生活', emoji:'🧊', img:'1522771739844-6a9f6d5f14af', heat:85, sales:38000, margin:55, comp:'低', compScore:38, trend:44, searchVol:58,
+   t:[30,33,36,40,44,49,54,60,67,74,80,85],
+   sell:'凉感面料+家居外穿设计,客单价 80-150 元',
+   reason:'竞争指数仅 38,毛利率 55%,当前热度上升最快的家居类目之一。秋冬可无缝切换法兰绒/珊瑚绒款,全年可做。',
+   risk:'面料成分虚标是平台处罚重灾区;尺码偏差导致退货率高,详情页需放尺码表。'},
+  {id:6, name:'露营氛围灯', cat:'户外运动', emoji:'🏕️', img:'1504280390367-361c6d9f38f4', heat:83, sales:29000, margin:47, comp:'低', compScore:35, trend:66, searchVol:52,
+   t:[18,20,24,28,33,38,44,52,60,68,76,83],
+   sell:'露营+庭院+氛围感三合一,社媒种草爆款式',
+   reason:'典型的「内容驱动」爆品:小红书/抖音露营话题持续升温,竞争尚未饱和。正值秋冬露营旺季,建议 9-12 月主推。',
+   risk:'强季节性(春秋旺、夏冬淡),需控制备货节奏;带电池注意认证。'},
+  {id:7, name:'蓝牙 5.4 耳机', cat:'数码3C', emoji:'🎧', img:'1505740420928-5e560c06d30e', heat:82, sales:120000, margin:35, comp:'高', compScore:90, trend:12, searchVol:95,
+   t:[60,62,64,65,68,70,72,75,77,79,81,82],
+   sell:'市场最大的常青类目,销量天花板极高',
+   reason:'月销 12 万+ 的超级大盘,但竞争指数 90 全场最高,白牌价格战残酷。除非有价格或设计优势,新手慎入。',
+   risk:'3C 认证必备;音质/降噪宣传需实测支撑,避免虚假宣传扣分。'},
+  {id:8, name:'大容量运动水杯', cat:'户外运动', emoji:'🚰', img:'1602143407151-7111542de6e8', heat:81, sales:47000, margin:49, comp:'中', compScore:56, trend:26, searchVol:66,
+   t:[50,52,53,55,58,60,63,66,70,74,78,81],
+   sell:'吨吨桶/吸管杯热度延续,健身户外两用',
+   reason:'毛利率接近 50% 且复购(换杯/配件)可观。差异化空间:刻字定制、品牌联名、吸管配件生态。',
+   risk:'材质需食品级 Tritan 并提供检测报告;保温性能虚标是差评主因。'},
+  {id:9, name:'化妆包旅行收纳', cat:'美妆个护', emoji:'💄', img:'1522335789203-aabd1fc54bc9', heat:78, sales:33000, margin:58, comp:'低', compScore:40, trend:39, searchVol:48,
+   t:[35,38,40,43,47,50,54,59,64,69,74,78],
+   sell:'轻出行场景带动,颜值即正义的收纳品类',
+   reason:'毛利率 58% 全场最高,重量轻运费低、无售后风险,非常适合新手起步。设计驱动:颜色/分仓/大开口是卖点。',
+   risk:'门槛低意味着易被抄款,需持续上新;印刷图案注意版权。'},
+  {id:10, name:'智能宠物饮水机', cat:'宠物用品', emoji:'💧', img:'1543466835-00a7907e9de1', heat:77, sales:26000, margin:46, comp:'低', compScore:42, trend:52, searchVol:50,
+   t:[28,31,34,38,42,47,51,56,62,68,73,77],
+   sell:'循环活水+静音,猫咪饮水健康概念走红',
+   reason:'与喂食器组成智能宠物生态,可搭配销售提升客单。竞争低、增速高,是典型的蓝海组合成员。',
+   risk:'水泵是售后焦点,备足滤芯配件;水电结构需防漏电设计。'},
+  {id:11, name:'折叠收纳箱', cat:'家居生活', emoji:'📦', img:'1584622650111-993a426fbf0a', heat:75, sales:52000, margin:44, comp:'中', compScore:62, trend:18, searchVol:60,
+   t:[55,56,57,58,60,62,64,66,69,71,73,75],
+   sell:'换季收纳刚需,走量型家居常青款',
+   reason:'需求稳定、退货率极低,适合作为店铺引流款。靠尺寸组合装提升客单价,压缩单件物流成本。',
+   risk:'单价低利润薄,拼价格拼供应链;描述承重需真实,避免差评。'},
+  {id:12, name:'桌面升降支架', cat:'数码3C', emoji:'🖥️', img:'1547394765-185e1e68f34e', heat:73, sales:21000, margin:40, comp:'中', compScore:55, trend:28, searchVol:44,
+   t:[40,42,45,47,50,53,56,60,64,67,70,73],
+   sell:'居家办公人群的颈椎救星,办公场景刚需',
+   reason:'远程办公常态化带动需求稳增,承重与稳定性是核心口碑点,差评控制好可长期做。',
+   risk:'金属件体积大重量高,物流成本占比高,建议发货前压扁包装。'},
+  {id:13, name:'瑜伽运动套装', cat:'户外运动', emoji:'🧘', img:'1544367567-0f2fcb009e0b', heat:71, sales:44000, margin:43, comp:'高', compScore:78, trend:15, searchVol:62,
+   t:[52,53,55,56,58,60,62,64,66,68,70,71],
+   sell:'女性运动场景大盘,内容种草转化率高',
+   reason:'Lululemon 平替需求旺盛,但红海且退货率高(尺码/色差)。需主攻细分(大码/孕产/小个子)才有机会。',
+   risk:'尺码混乱是退货重灾区;面料成分与"塑形"宣传需谨慎。'},
+  {id:14, name:'迷你空气炸锅', cat:'厨房用品', emoji:'🍟', img:'1556910103-1c02745aae4d', heat:70, sales:36000, margin:38, comp:'高', compScore:80, trend:9, searchVol:58,
+   t:[58,59,60,61,62,63,64,66,67,68,69,70],
+   sell:'一人食经济代表,厨房电器顶流',
+   reason:'大盘成熟但增长放缓、竞争白热化,新品靠容量细分(1.2L 独居款)或高颜值配色切入。',
+   risk:'3C 认证 + 售后维修成本高;跨境属重货,头程运费侵蚀利润。'},
+  {id:15, name:'香薰加湿一体机', cat:'家居生活', emoji:'🕯️', img:'1570172619644-dfd03ed5d881', heat:68, sales:31000, margin:52, comp:'低', compScore:45, trend:33, searchVol:46,
+   t:[32,35,37,40,43,46,50,53,57,61,65,68],
+   sell:'氛围感经济+秋冬干燥双重需求',
+   reason:'毛利率 52%,秋冬即将进入旺季。颜值驱动,礼盒装在 Q4 礼赠季溢价能力强。',
+   risk:'漏水是差评主因;精油兼容性与"香疗功效"宣传需注意合规。'},
+  {id:16, name:'儿童保温杯', cat:'母婴用品', emoji:'🍼', img:'1503454537195-1dcabb73ffb9', heat:66, sales:27000, margin:45, comp:'中', compScore:52, trend:24, searchVol:40,
+   t:[40,42,44,45,47,49,52,55,58,61,64,66],
+   sell:'开学季+幼儿园场景,家长决策重安全',
+   reason:'复购率高(换杯/配件),家长对品质不敏感对安全极敏感,做深信任可获高忠诚客群。',
+   risk:'3C + 食品接触材料认证必须齐全;卡通图案注意 IP 侵权。'},
+  {id:17, name:'美妆蛋套装', cat:'美妆个护', emoji:'🥚', img:'1571781926291-c477ebfd024b', heat:64, sales:39000, margin:62, comp:'中', compScore:55, trend:18, searchVol:45,
+   t:[46,47,48,50,51,53,55,57,59,61,63,64],
+   sell:'化妆高频消耗品,天然复购属性',
+   reason:'毛利率 62% 且是消耗品,适合做订阅式/组合装。轻小件运费优势明显,跨境适配度高。',
+   risk:'亲水性/回弹性品质分层明显,差评多来自泡水变形。'},
+  {id:18, name:'儿童益智积木', cat:'母婴用品', emoji:'🧱', img:'1587654780291-39c9404d746b', heat:66, sales:24000, margin:45, comp:'中', compScore:58, trend:21, searchVol:36,
+   t:[42,44,45,47,49,51,53,55,58,60,63,66],
+   sell:'Q4 礼赠旺季临近,益智早教概念受政策鼓励',
+   reason:'即将进入双旦+寒假礼赠旺季,现在备货时间窗正好。颗粒数/年龄段分级清晰,适合组合 SKU。',
+   risk:'3C 认证 + 小零件窒息警示语必须规范;避免模仿乐高专利积木结构。'},
+  {id:19, name:'无痕内衣', cat:'服饰内衣', emoji:'👙', img:'1441984904996-e0b6ba687e04', heat:74, sales:36000, margin:58, comp:'中', compScore:52, trend:26, searchVol:42,
+   t:[40,42,45,48,50,53,56,60,64,67,71,74],
+   sell:'一体织无钢圈,舒适无痕,贴身衣物复购率高',
+   reason:'女性贴身衣物对品质敏感、对价格不敏感,毛利率 58% 且复购稳定。按尺码/色号组合 SKU,退货率可控。',
+   risk:'尺码不符是退款主因,详情页需放详细尺码表;面料成分(锦纶/氨纶比例)需如实标注。'},
+  {id:20, name:'轻薄羽绒服', cat:'服饰内衣', emoji:'🧥', img:'1544022613-e87ca75a784a', heat:78, sales:31000, margin:47, comp:'中', compScore:60, trend:38, searchVol:55,
+   t:[30,32,34,36,38,40,42,45,52,60,68,78],
+   sell:'90 白鸭绒+超轻面料,收纳后仅水瓶大小',
+   reason:'秋冬旺季正式启动,搜索热度 3 个月翻倍。轻便场景(通勤/内搭)与厚重羽绒服错位竞争,现在入场正当时。',
+   risk:'强季节性(9-12 月),季末清货压力大;充绒量/含绒量虚标是平台处罚重灾区;跨境需防潮压缩包装。'},
+  {id:21, name:'错题打印机', cat:'文具办公', emoji:'🖨️', img:'1497032628192-86f99bcd76bc', heat:80, sales:19000, margin:50, comp:'低', compScore:38, trend:45, searchVol:38,
+   t:[30,33,36,40,44,48,52,57,63,69,75,80],
+   sell:'拍题即打印,家长辅导刚需,耗材复购强',
+   reason:'教育硬件中的黑马:竞争指数仅 38 而增速 45%。主机利润之外,热敏纸耗材带来持续复购,LTV 远超普通小商品。',
+   risk:'热敏打印字迹多年会褪色需说明;「拍照搜题」相关功能涉政策监管,宣传话术要谨慎。'},
+  {id:22, name:'桌面文件收纳架', cat:'文具办公', emoji:'🗂️', img:'1497215728101-856f4ea42174', heat:62, sales:28000, margin:49, comp:'中', compScore:56, trend:16, searchVol:32,
+   t:[42,43,45,46,48,50,52,54,56,58,60,62],
+   sell:'办公/学习桌面收纳,走量常青款',
+   reason:'开学季+办公场景双需求,需求稳定。靠多层/带笔筒/可折叠等组合装提升客单价,适合做店铺利润补充款。',
+   risk:'单价低利润薄,拼供应链效率;体积大物流成本占比高,发货前需压扁包装。'},
+  {id:23, name:'车载吸尘器', cat:'汽车用品', emoji:'🚗', img:'1489824904134-891ab64532f1', heat:76, sales:33000, margin:46, comp:'中', compScore:58, trend:24, searchVol:48,
+   t:[44,46,48,50,53,56,58,61,65,69,73,76],
+   sell:'无线手持+车家两用,有车家庭刚需',
+   reason:'汽车保有量持续增长带动车载用品大盘,无线吸尘器是其中增速最快的细分。车家两用卖点拓宽使用场景。',
+   risk:'带锂电池需 UN38.3 航空认证;吸力/续航虚标是差评重灾区;吸嘴配件齐全度影响口碑。'},
+  {id:24, name:'车载手机支架', cat:'汽车用品', emoji:'📱', img:'1512941937669-90a1b58e7e9c', heat:72, sales:58000, margin:44, comp:'高', compScore:76, trend:14, searchVol:64,
+   t:[50,52,53,55,56,58,60,62,65,67,70,72],
+   sell:'出行导航刚需,百年不过时的走量王',
+   reason:'月销 5.8 万的超大盘,需求极度稳定。磁吸/重力感应等新结构仍有微创新空间,适合作为引流款。',
+   risk:'红海价格战明显;夹持力不足/挡出风口差评多;磁吸方案注意相关专利。'},
+  {id:25, name:'折叠泡脚桶', cat:'保健养生', emoji:'🦶', img:'1544161515-4ab6ce6db874', heat:75, sales:26000, margin:52, comp:'低', compScore:42, trend:41, searchVol:44,
+   t:[28,30,33,36,40,44,48,53,59,64,70,75],
+   sell:'秋冬养生场景,折叠设计解决收纳痛点',
+   reason:'入秋后养生品类全面爆发,泡脚桶搜索增速 41%。折叠款解决传统泡脚桶「重、大、难收纳」痛点,竞争尚未饱和。',
+   risk:'电加热产品需 3C 认证,漏电/温控是安全红线;宣传「排毒祛湿」等功效违反广告法,只能说舒缓放松。'},
+  {id:26, name:'蒸汽眼罩', cat:'保健养生', emoji:'👁️', img:'1541781774459-bb2af2f05b55', heat:70, sales:41000, margin:55, comp:'中', compScore:54, trend:22, searchVol:46,
+   t:[44,46,47,49,51,53,55,58,61,64,67,70],
+   sell:'熬夜场景高频消耗品,复购率极高',
+   reason:'一次性消耗品天然复购,毛利率 55%。自用+送礼双场景,组合装(7天/30天装)提升客单,适合长期深耕。',
+   risk:'发热温度需安全检测报告;眼部用品质检要求高;宣传「治疗近视/去黑眼圈」属违规功效宣称。'},
+  {id:27, name:'家用电动工具箱', cat:'工具五金', emoji:'🧰', img:'1581244277943-fe4a9c777189', heat:65, sales:17000, margin:43, comp:'低', compScore:44, trend:19, searchVol:28,
+   t:[40,42,44,46,48,50,52,55,58,60,63,65],
+   sell:'租房人群安装维修刚需,礼盒装礼赠属性',
+   reason:'租房经济带动家用小型工具需求,竞争低、退货率低。充电电钻+配件组合装客单价 150-250 元,利润扎实。',
+   risk:'充电电钻属带电工具需 3C 认证;跨境属重货物流占比高;刀头利器部分渠道运输受限。'},
+  {id:28, name:'自动浇花器', cat:'绿植园艺', emoji:'🪴', img:'1416879595882-3373a0480b5b', heat:68, sales:22000, margin:51, comp:'低', compScore:40, trend:36, searchVol:30,
+   t:[26,28,31,34,38,42,46,50,55,59,63,68],
+   sell:'出差浇水痛点+阳台种植经济兴起',
+   reason:'「养绿植的年轻人」持续增多,渗水/滴灌式浇花器解决出差断水痛点,竞争指数仅 40,是典型小众蓝海。',
+   risk:'渗水速度品控决定差评率;季节性明显(春夏旺、秋冬淡);套装中陶土件易碎需注意包装。'},
+  {id:29, name:'派对气球装饰套装', cat:'节庆派对', emoji:'🎈', img:'1530103862676-de8c9debad1d', heat:66, sales:39000, margin:61, comp:'中', compScore:50, trend:28, searchVol:36,
+   t:[30,32,34,36,38,40,42,45,48,52,58,66],
+   sell:'生日/节日布置刚需,毛利率高运费低',
+   reason:'Q4 进入全年最强节点(圣诞/元旦/春节),主题套装(宝宝宴/生日/跨年)溢价能力强,轻小件物流成本极低。',
+   risk:'强节日属性,节点后销量断崖,备货节奏是关键;瘪球/漏气率决定差评;乳胶过敏需有警示说明。'},
+  {id:30, name:'钛钢饰品套装', cat:'饰品配件', emoji:'💍', img:'1515562141207-7a88fb7ce338', heat:69, sales:35000, margin:64, comp:'高', compScore:72, trend:17, searchVol:40,
+   t:[46,48,49,51,53,55,57,59,62,64,67,69],
+   sell:'高毛利轻小件,跨境爆款常客',
+   reason:'毛利率 64% 全场最高,重量几乎可以忽略的物流成本让它成为跨境玩家的利润款标配。按套装售卖拉高客单。',
+   risk:'掉色/过敏是差评主因,材质(钛钢/不锈钢/电镀层)标注必须真实;款式无版权保护易被抄,需持续上新。'},
+  {id:31, name:'德训鞋', cat:'鞋靴', emoji:'👟', img:'1556906781-9a412961c28c', heat:84, sales:52000, margin:46, comp:'高', compScore:74, trend:32, searchVol:58,
+   t:[50,52,55,58,60,63,66,70,74,77,81,84],
+   sell:'复古百搭德训风,男女同款四季常青',
+   reason:'近两年最稳的鞋类爆款之一,颜值百搭+四季可穿。虽竞争升温,但款式迭代快(配色/厚底变体),新入场靠差异化设计仍有空间。',
+   risk:'头层皮/超纤材质标注需真实;偏码是差评重灾区,详情页标注「建议拍大半码」;严禁仿大牌 Logo。'},
+  {id:32, name:'厚底老爹鞋', cat:'鞋靴', emoji:'🥿', img:'1560343090-f0409e92791a', heat:79, sales:47000, margin:48, comp:'高', compScore:70, trend:21, searchVol:52,
+   t:[56,58,60,62,64,65,67,69,72,75,77,79],
+   sell:'显高 5cm+ 增高厚底,男女通穿',
+   reason:'显高是永恒需求,厚底老爹鞋客单价适中(120-260 元),透气/超软发泡等新卖点持续迭代,走量稳定。',
+   risk:'鞋底开胶是差评重点;增高高度宣传勿夸大;鞋子属重货,物流成本占售价比例高,需谈好快递价。'},
+  {id:33, name:'越野徒步鞋', cat:'鞋靴', emoji:'🥾', img:'1600185365483-26d7a4cc7519', heat:81, sales:28000, margin:49, comp:'中', compScore:56, trend:35, searchVol:44,
+   t:[36,38,41,44,47,50,53,58,62,68,75,81],
+   sell:'防泼水+抓地大底,山系穿搭(Gorpcore)带火',
+   reason:'山系户外风从日韩传导国内,徒步鞋增速 35% 且竞争中等。正值秋冬登山季,与冲锋衣搭售可显著提客单。',
+   risk:'防水性能虚标差评多,打样实测;宣传勿乱标「防滑等级」等不存在认证;鞋帮支撑性影响口碑。'},
+  {id:34, name:'玛丽珍单鞋', cat:'鞋靴', emoji:'👠', img:'1449505278894-297fdb3edbc1', heat:77, sales:39000, margin:56, comp:'中', compScore:54, trend:27, searchVol:46,
+   t:[42,44,47,50,52,55,58,62,66,70,74,77],
+   sell:'复古法式风,芭蕾风穿搭核心单品',
+   reason:'女鞋里毛利最高的款式之一(56%),芭蕾/法式穿搭热度延续,款式更新快,做小众设计感可避开正面竞争。',
+   risk:'鞋跟高度与内里材质需如实标注;磨脚是差评重灾区;原创设计注意登记版权防抄袭。'},
+  {id:35, name:'软木底拖鞋', cat:'鞋靴', emoji:'🩴', img:'1603487742131-4160ec999306', heat:73, sales:34000, margin:52, comp:'低', compScore:44, trend:24, searchVol:34,
+   t:[46,48,50,52,54,56,58,61,64,68,71,73],
+   sell:'软木+PU 面,居家外穿两用',
+   reason:'舒适风潮延续,软木拖鞋客单低、退货率极低,居家/外穿双场景,适合做店铺引流+利润组合款。',
+   risk:'软木发霉/开裂是差评点,仓储注意防潮;尺码偏码需标注;仿博肯外观注意外观专利风险。'},
+  {id:36, name:'洞洞鞋', cat:'鞋靴', emoji:'👡', img:'1606107557195-0e29a4b5b4aa', heat:75, sales:68000, margin:50, comp:'高', compScore:78, trend:15, searchVol:66,
+   t:[60,62,63,65,66,68,69,70,72,73,74,75],
+   sell:'年销亿双的常青品类,防泼水好打理',
+   reason:'超级大盘全年稳定,利润靠鞋花配件生态拉高客单——配件复购率极高,是鞋类里少有的「耗材逻辑」。',
+   risk:'外观专利垄断度高,严禁仿 Crocs 造型;EVA 材质含量需如实标注;乘扶梯夹脚话题注意舆情与警示。'},
+  {id:37, name:'雪地靴', cat:'鞋靴', emoji:'❄️', img:'1590156206657-aec9b9ac5c98', heat:82, sales:41000, margin:50, comp:'中', compScore:58, trend:48, searchVol:48,
+   t:[22,25,28,32,36,40,45,52,60,68,75,82],
+   sell:'秋冬爆发前置,毛绒内里+防滑大底',
+   reason:'9-12 月全年最强窗口就在眼前,搜索增速 48% 全场第一。产业带货源成熟成本低,现在备货正当时。',
+   risk:'强季节性,季末库存压力大;皮毛一体 vs 人造毛必须如实标注;换季清仓节奏要提前规划。'},
+  {id:38, name:'马丁靴', cat:'鞋靴', emoji:'👢', img:'1608256246200-53e635b5b65f', heat:72, sales:36000, margin:49, comp:'高', compScore:68, trend:18, searchVol:42,
+   t:[42,44,46,48,50,52,54,57,60,64,68,72],
+   sell:'秋冬穿搭刚需,英伦风永不过时',
+   reason:'入秋即旺季,经典款生命周期长。8 孔/6 孔/软皮细分多,可从大码女鞋(40-43 码)等被忽视的细分切入。',
+   risk:'皮质虚标(头层/二层/超纤)是处罚重灾区;掉色磨脚差评多;鞋盒体积大,物流费用要提前核算。'},
+  {id:39, name:'乐福鞋', cat:'鞋靴', emoji:'👞', img:'1543163521-1bf539c55dd2', heat:70, sales:31000, margin:51, comp:'中', compScore:52, trend:23, searchVol:36,
+   t:[42,44,46,48,50,52,54,56,59,63,66,70],
+   sell:'职场通勤+学院风,一脚蹬免系带',
+   reason:'通勤场景需求稳定,一脚蹬设计适配懒人经济。皮面/麂皮多材质矩阵可覆盖 150-400 元不同价位带。',
+   risk:'鞋底偏硬/磨脚踝是差评主因;漆皮工艺良莠不齐,打样验收要严格;尺码偏大需在详情页标注。'},
+  {id:40, name:'缓震跑步鞋', cat:'鞋靴', emoji:'🏃', img:'1542291026-7eec264c27ff', heat:78, sales:74000, margin:44, comp:'高', compScore:84, trend:13, searchVol:78,
+   t:[58,60,62,64,65,67,69,71,73,75,77,78],
+   sell:'跑步经济+马拉松热,超大盘常青款',
+   reason:'全民跑步带动月销 7 万+ 的超大盘,但品牌垄断严重。切入点:45-47 大码、超宽脚掌等被巨头忽视的细分需求。',
+   risk:'与运动巨头正面竞争无优势;缓震/回弹宣传需有实测支撑;超纤革等材质标注必须真实。'},
+  {id:41, name:'儿童机能鞋', cat:'鞋靴', emoji:'🧒', img:'1519238263530-99bdd11df2ea', heat:69, sales:29000, margin:47, comp:'中', compScore:50, trend:20, searchVol:32,
+   t:[42,44,46,48,50,52,54,56,59,62,65,69],
+   sell:'学步/入园场景,家长重安全轻价格',
+   reason:'家长对童鞋「护不护脚」极度敏感、价格敏感度低。「前掌 1/3 正确弯折」等机能概念是很强的转化卖点。',
+   risk:'童鞋需符合 GB30585 检测,甲醛/重金属限量必须合规;装饰小配件需防脱落防误吞设计。'},
+  {id:42, name:'一脚蹬帆布鞋', cat:'鞋靴', emoji:'👟', img:'1525966222134-fcfa99b8ae77', heat:67, sales:45000, margin:45, comp:'高', compScore:72, trend:12, searchVol:50,
+   t:[50,51,53,54,56,57,59,61,62,64,66,67],
+   sell:'懒人一脚蹬,学生党走量王',
+   reason:'客单低销量大,开学季+换季两波稳定流量。纯色基础款拼供应链效率,印花/涂鸦款拼设计溢价。',
+   risk:'开胶/脱线是差评主因,胶水工艺要把关;帆布色差需实物拍摄;低客单必须严控快递成本。'}
+];
+
+const TREND_DATA = {
+  '磁吸充电宝':   [38,41,45,50,56,61,66,72,78,84,90,96],
+  '宠物智能用品': [30,32,35,39,44,49,55,60,66,73,81,88],
+  '露营户外装备': [55,48,44,40,38,42,51,63,76,88,92,85]
+};
+const MONTHS = ['25/10','25/11','25/12','26/01','26/02','26/03','26/04','26/05','26/06','26/07','26/08','26/09'];
+
+/* ---------- 1688 搜索关键词 ----------
+   s.1688.com 的 keywords 参数按 GBK 解码,必须传 GBK 百分号编码,
+   否则 1688 端显示乱码(如「绛嬭啘鏋寜鎽╀华」)且搜不到结果。
+   数组:[复制用的中文词, 链接用的 GBK 编码] */
+const KW = {
+  1:['磁吸充电宝','%b4%c5%ce%fc%b3%e4%b5%e7%b1%a6'],
+  2:['宠物喂食器','%b3%e8%ce%ef%ce%b9%ca%b3%c6%f7'],
+  3:['筋膜枪','%bd%ee%c4%a4%c7%b9'],
+  4:['榨汁杯','%d5%a5%d6%ad%b1%ad'],
+  5:['冰丝睡衣','%b1%f9%cb%bf%cb%af%d2%c2'],
+  6:['露营灯','%c2%b6%d3%aa%b5%c6'],
+  7:['蓝牙耳机','%c0%b6%d1%c0%b6%fa%bb%fa'],
+  8:['运动水杯','%d4%cb%b6%af%cb%ae%b1%ad'],
+  9:['化妆包','%bb%af%d7%b1%b0%fc'],
+  10:['宠物饮水机','%b3%e8%ce%ef%d2%fb%cb%ae%bb%fa'],
+  11:['收纳箱','%ca%d5%c4%c9%cf%e4'],
+  12:['显示器支架','%cf%d4%ca%be%c6%f7%d6%a7%bc%dc'],
+  13:['瑜伽套装','%e8%a4%d9%a4%cc%d7%d7%b0'],
+  14:['空气炸锅','%bf%d5%c6%f8%d5%a8%b9%f8'],
+  15:['香薰机','%cf%e3%de%b9%bb%fa'],
+  16:['儿童保温杯','%b6%f9%cd%af%b1%a3%ce%c2%b1%ad'],
+  17:['美妆蛋','%c3%c0%d7%b1%b5%b0'],
+  18:['益智积木','%d2%e6%d6%c7%bb%fd%c4%be'],
+  19:['无痕内衣','%ce%de%ba%db%c4%da%d2%c2'],
+  20:['轻薄羽绒服','%c7%e1%b1%a1%d3%f0%c8%de%b7%fe'],
+  21:['错题打印机','%b4%ed%cc%e2%b4%f2%d3%a1%bb%fa'],
+  22:['文件收纳架','%ce%c4%bc%fe%ca%d5%c4%c9%bc%dc'],
+  23:['车载吸尘器','%b3%b5%d4%d8%ce%fc%b3%be%c6%f7'],
+  24:['车载支架','%b3%b5%d4%d8%d6%a7%bc%dc'],
+  25:['折叠泡脚桶','%d5%db%b5%fe%c5%dd%bd%c5%cd%b0'],
+  26:['蒸汽眼罩','%d5%f4%c6%fb%d1%db%d5%d6'],
+  27:['电动工具箱','%b5%e7%b6%af%b9%a4%be%df%cf%e4'],
+  28:['自动浇花器','%d7%d4%b6%af%bd%bd%bb%a8%c6%f7'],
+  29:['气球装饰','%c6%f8%c7%f2%d7%b0%ca%ce'],
+  30:['钛钢饰品','%ee%d1%b8%d6%ca%ce%c6%b7'],
+  31:['德训鞋','%b5%c2%d1%b5%d0%ac'],
+  32:['老爹鞋','%c0%cf%b5%f9%d0%ac'],
+  33:['徒步鞋','%cd%bd%b2%bd%d0%ac'],
+  34:['玛丽珍鞋','%c2%ea%c0%f6%d5%e4%d0%ac'],
+  35:['软木拖鞋','%c8%ed%c4%be%cd%cf%d0%ac'],
+  36:['洞洞鞋','%b6%b4%b6%b4%d0%ac'],
+  37:['雪地靴','%d1%a9%b5%d8%d1%a5'],
+  38:['马丁靴','%c2%ed%b6%a1%d1%a5'],
+  39:['乐福鞋','%c0%d6%b8%a3%d0%ac'],
+  40:['跑步鞋','%c5%dc%b2%bd%d0%ac'],
+  41:['儿童机能鞋','%b6%f9%cd%af%bb%fa%c4%dc%d0%ac'],
+  42:['帆布鞋','%b7%ab%b2%bc%d0%ac']
+};
+
+/* ---------- 工具函数 ---------- */
+const $ = s => document.querySelector(s);
+const fmtWan = n => n >= 10000 ? (n/10000).toFixed(1).replace(/\.0$/,'') + '万' : n;
+const heatColor = h => h >= 90 ? '#059669' : h >= 80 ? '#0891b2' : h >= 70 ? '#d97706' : '#5c6b82';
+const compClass = c => ({'低':'low','中':'mid','高':'high'})[c];
+const imgUrl = (id, w) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=70`;
+
+function sparkSVG(arr){
+  const w=110, h=30, min=Math.min(...arr), max=Math.max(...arr), span=(max-min)||1;
+  const pts = arr.map((v,i)=>`${(i/(arr.length-1)*w).toFixed(1)},${(h-4-(v-min)/span*(h-8)).toFixed(1)}`).join(' ');
+  const up = arr[arr.length-1] >= arr[0];
+  const c = up ? '#34d399' : '#f87171';
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${pts}" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${w}" cy="${(h-4-(arr[arr.length-1]-min)/span*(h-8)).toFixed(1)}" r="2.5" fill="${c}"/></svg>`;
+}
+
+/* ---------- 商品榜单 ---------- */
+let currentCat = '全部', currentTerm = '';
+const grid = $('#grid'), resultNote = $('#resultNote');
+
+function filtered(){
+  return PRODUCTS.filter(p =>
+    (currentCat === '全部' || p.cat === currentCat) &&
+    (!currentTerm || p.name.includes(currentTerm) || p.cat.includes(currentTerm) || p.sell.includes(currentTerm))
+  );
+}
+
+function renderGrid(){
+  const list = filtered().sort((a,b)=>b.heat-a.heat);
+  grid.innerHTML = list.map(p => `
+    <article class="card" data-id="${p.id}">
+      <div class="card-photo" data-emoji="${p.emoji}">
+        <img src="${imgUrl(p.img, 640)}" alt="${p.name}" loading="lazy" onerror="this.parentElement.classList.add('noimg')">
+        <span class="comp-badge ${compClass(p.comp)}">竞争${p.comp}</span>
+      </div>
+      <h3 class="card-name">${p.name}</h3>
+      <p class="card-sell">${p.sell}</p>
+      <div class="spark-row">
+        ${sparkSVG(p.t)}
+        <span class="trend-badge up">↗ ${p.trend}%</span>
+      </div>
+      <div class="card-metrics">
+        <div class="m"><div class="m-num" style="color:${heatColor(p.heat)}">${p.heat}</div><div class="m-lbl">热度指数</div></div>
+        <div class="m"><div class="m-num">${fmtWan(p.sales)}</div><div class="m-lbl">月销量</div></div>
+        <div class="m"><div class="m-num" style="color:#047857">${p.margin}%</div><div class="m-lbl">毛利率</div></div>
+      </div>
+      <button class="card-btn">查看选品分析 →</button>
+    </article>`).join('');
+  resultNote.textContent = currentTerm
+    ? `🔍 搜索“${currentTerm}”找到 ${list.length} 个相关品类 · 演示数据`
+    : `📌 近 30 天综合热度排序,共 ${list.length} 个品类 · 演示数据,仅供选品方法参考`;
+}
+
+$('#tabs').addEventListener('click', e=>{
+  const btn = e.target.closest('.tab'); if(!btn) return;
+  document.querySelectorAll('#tabs .tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  currentCat = btn.dataset.cat; currentTerm = ''; $('#searchInput').value='';
+  renderGrid();
+});
+
+$('#searchForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  currentTerm = $('#searchInput').value.trim();
+  document.querySelectorAll('#tabs .tab').forEach(t=>t.classList.toggle('active', t.dataset.cat==='全部'));
+  currentCat = '全部';
+  renderGrid();
+  document.getElementById('trending').scrollIntoView({behavior:'smooth'});
+});
+
+/* ---------- 商品详情弹窗 ---------- */
+const modal = $('#modal');
+grid.addEventListener('click', e=>{
+  const card = e.target.closest('.card'); if(!card) return;
+  const p = PRODUCTS.find(x=>x.id === +card.dataset.id);
+  const mPhoto = $('#mPhoto');
+  mPhoto.classList.remove('noimg');
+  mPhoto.dataset.emoji = p.emoji;
+  mPhoto.innerHTML = `<img src="${imgUrl(p.img, 960)}" alt="${p.name}" onerror="this.parentElement.classList.add('noimg')">`;
+  $('#mIcon').textContent = p.emoji;
+  $('#mName').textContent = p.name;
+  $('#mTags').innerHTML = `
+    <span class="comp-badge ${compClass(p.comp)}">竞争${p.comp}</span>
+    <span class="trend-badge up" style="margin-left:6px">30天热度 ↗${p.trend}%</span>
+    <span class="side-tip" style="margin:0 0 0 8px">${p.cat}</span>`;
+  $('#mDesc').textContent = p.reason;
+  $('#mMetrics').innerHTML = `
+    <div class="m"><div class="m-num" style="color:${heatColor(p.heat)}">${p.heat}</div><div class="m-lbl">热度指数</div></div>
+    <div class="m"><div class="m-num">${fmtWan(p.sales)}</div><div class="m-lbl">月销量(件)</div></div>
+    <div class="m"><div class="m-num" style="color:#047857">${p.margin}%</div><div class="m-lbl">毛利率</div></div>
+    <div class="m"><div class="m-num">${p.searchVol}万</div><div class="m-lbl">月搜索量</div></div>
+    <div class="m"><div class="m-num">${p.compScore}</div><div class="m-lbl">竞争指数</div></div>
+    <div class="m"><div class="m-num" style="color:#047857">+${p.trend}%</div><div class="m-lbl">搜索增速</div></div>`;
+  $('#mRisk').textContent = '⚠️ 风险提示:' + p.risk;
+  const kw = KW[p.id] || [p.name, encodeURIComponent(p.name)];
+  $('#mLink').href = 'https://s.1688.com/selloffer/offer_search.htm?keywords=' + kw[1];
+  $('#mCopy').dataset.kw = kw[0];
+  modal.classList.add('open');
+});
+const closeModal = ()=> modal.classList.remove('open');
+$('#modalClose').addEventListener('click', closeModal);
+modal.addEventListener('click', e=>{ if(e.target === modal) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeModal(); });
+
+/* ---------- 复制关键词 + 轻提示 ---------- */
+let toastTimer = null;
+function showToast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+function copyText(text){
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text);
+  }
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } finally { ta.remove(); }
+  return Promise.resolve();
+}
+$('#mCopy').addEventListener('click', ()=>{
+  const kw = $('#mCopy').dataset.kw || '';
+  copyText(kw).then(()=> showToast('✅ 已复制「' + kw + '」,可粘贴到 1688 / 拼多多 搜索'))
+    .catch(()=> showToast('请手动复制:' + kw));
+});
+
+/* ---------- 蓝海雷达 ---------- */
+function renderBlueList(){
+  const top = [...PRODUCTS].filter(p=>p.comp!=='高')
+    .sort((a,b)=>(100-b.compScore+b.trend)-(100-a.compScore+a.trend)).slice(0,5);
+  $('#blueList').innerHTML = top.map((p,i)=>`
+    <div class="blue-item">
+      <div class="blue-rank">${i+1}</div>
+      <div>
+        <div class="blue-name">${p.emoji} ${p.name}</div>
+        <div class="blue-meta">竞争${p.comp}(${p.compScore}) · 月搜索 ${p.searchVol}万 · 增速 +${p.trend}% · 毛利 ${p.margin}%</div>
+      </div>
+    </div>`).join('');
+}
+
+if (window.Chart){
+  Chart.defaults.color = '#5c6b82';
+  Chart.defaults.font.family = '"Noto Sans SC","Microsoft YaHei",sans-serif';
+  Chart.defaults.borderColor = 'rgba(15,23,42,.08)';
+
+  /* 散点:竞争 × 需求 */
+  const compColor = c => ({'低':'rgba(16,185,129,.85)','中':'rgba(245,158,11,.85)','高':'rgba(239,68,68,.75)'})[c];
+  new Chart($('#scatterChart'), {
+    type:'bubble',
+    data:{ datasets:[{
+      data: PRODUCTS.map(p=>({x:p.compScore, y:p.searchVol, r:Math.min(16, 5+p.sales/9000), name:p.name, comp:p.comp, m:p.margin, t:p.trend})),
+      backgroundColor: PRODUCTS.map(p=>compColor(p.comp))
+    }]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            title: items => items[0].raw.name,
+            label: item => ` 竞争${item.raw.comp}(${item.raw.x}) · 需求 ${item.raw.y}万 · 毛利 ${item.raw.m}% · 增速 +${item.raw.t}%`
+          }
+        }
+      },
+      scales:{
+        x:{min:0,max:100,title:{display:true,text:'竞争指数 →',font:{size:12}}},
+        y:{min:0,max:100,title:{display:true,text:'需求指数(月搜索热度)↑',font:{size:12}}}
+      }
+    },
+    plugins:[{
+      id:'quadrant',
+      beforeDatasetsDraw(chart){
+        const {ctx, chartArea:a, scales} = chart;
+        const xm = scales.x.getPixelForValue(50), ym = scales.y.getPixelForValue(50);
+        ctx.save();
+        ctx.fillStyle = 'rgba(5,150,105,.08)';
+        ctx.fillRect(a.left, a.top, xm-a.left, ym-a.top);
+        ctx.strokeStyle = 'rgba(71,85,105,.35)';
+        ctx.setLineDash([5,5]);
+        ctx.beginPath(); ctx.moveTo(xm,a.top); ctx.lineTo(xm,a.bottom);
+        ctx.moveTo(a.left,ym); ctx.lineTo(a.right,ym); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(4,120,87,.95)';
+        ctx.font = 'bold 13px "Noto Sans SC"';
+        ctx.fillText('蓝海机会区(低竞争 × 高需求)', a.left+12, a.top+20);
+        ctx.restore();
+      }
+    }]
+  });
+
+  /* 折线:品类热度走势 */
+  const lineCtx = $('#lineChart').getContext('2d');
+  const grad = lineCtx.createLinearGradient(0,0,0,300);
+  grad.addColorStop(0,'rgba(8,145,178,.26)');
+  grad.addColorStop(1,'rgba(8,145,178,0)');
+  const lineChart = new Chart(lineCtx, {
+    type:'line',
+    data:{ labels:MONTHS, datasets:[{
+      label:'磁吸充电宝', data:TREND_DATA['磁吸充电宝'],
+      borderColor:'#0891b2', backgroundColor:grad, fill:true, tension:.35,
+      pointBackgroundColor:'#0891b2', pointRadius:3, borderWidth:2.5
+    }]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{y:{min:0,max:100,title:{display:true,text:'热度指数',font:{size:12}}}}
+    }
+  });
+  $('#lineBtns').addEventListener('click', e=>{
+    const btn = e.target.closest('.tab'); if(!btn) return;
+    document.querySelectorAll('#lineBtns .tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    const key = btn.dataset.key;
+    lineChart.data.datasets[0].data = TREND_DATA[key];
+    lineChart.data.datasets[0].label = key;
+    lineChart.update();
+  });
+}
+
+/* ---------- 利润计算器 ---------- */
+const ids = ['cPrice','cCost','cShip','cComm','cAd','cVol'];
+const money = n => '¥ ' + Math.round(n).toLocaleString();
+
+function calc(){
+  const [price, cost, ship, comm, ad, vol] = ids.map(id => +$('#'+id).value || 0);
+  const commAmt = price * comm / 100;
+  const totalCost = cost + ship + commAmt + ad;
+  const profit = price - totalCost;
+  const margin = price > 0 ? profit / price * 100 : 0;
+  const month = profit * vol;
+  const roi = totalCost > 0 ? profit / totalCost * 100 : 0;
+  const breakeven = profit > 0 ? Math.ceil(10000 / profit) : 0; /* 假设前期固定投入(摄影/软件/杂费)1万元 */
+  const ring = $('#marginRing'), badge = $('#healthBadge');
+
+  $('#oProfit').textContent = money(profit);
+  $('#oProfit').classList.toggle('neg', profit < 0);
+  $('#oMonth').textContent = money(month);
+  $('#oMonth').classList.toggle('neg', month < 0);
+  $('#oRoi').textContent = Math.round(roi) + '%';
+  $('#oCostAll').textContent = money(totalCost);
+  $('#oBreakeven').textContent = profit > 0 ? breakeven + ' 件' : '—';
+
+  let label, color, tip;
+  if (profit < 0){ label = '亏损 · 立即调整'; color = '#dc2626'; tip = '当前定价下单件亏损,建议提价、换供应商或压缩物流/广告成本。'; }
+  else if (margin >= 40){ label = '优秀 · 值得入局'; color = '#059669'; tip = '毛利率 40%+ 有充足广告与促销空间,同时记得预留退货损耗(约 3%-8%)。'; }
+  else if (margin >= 25){ label = '健康 · 可以操作'; color = '#0891b2'; tip = '利润尚可但容错低,建议优化供应链把毛利做到 40% 以上。'; }
+  else if (margin >= 10){ label = '偏薄 · 谨慎入局'; color = '#d97706'; tip = '一波退货或广告超支就会亏钱,适合作为引流款而非利润款。'; }
+  else { label = '危险 · 不建议'; color = '#dc2626'; tip = '毛利率不足 10%,基本在为平台和快递打工,建议重新选品。'; }
+  badge.textContent = label; badge.style.background = color + '22'; badge.style.color = color;
+  ring.style.setProperty('--p', Math.max(0, Math.min(70, margin)) / 70 * 100);
+  ring.style.setProperty('--c', color);
+  $('#calcAdvice').textContent = '💡 ' + tip;
+}
+ids.forEach(id => $('#'+id).addEventListener('input', calc));
+document.querySelectorAll('.chip-btn').forEach(btn => btn.addEventListener('click', ()=>{
+  btn.dataset.preset.split(',').forEach((v,i)=> $('#'+ids[i]).value = v);
+  calc();
+}));
+calc();
+
+/* ---------- 货源比价 ---------- */
+const SRC_COSTS = {1:38,2:95,3:62,4:22,5:26,6:18,7:45,8:21,9:12,10:78,11:19,12:42,13:35,14:128,15:26,16:24,17:8,18:22,19:19,20:88,21:118,22:15,23:68,24:14,25:76,26:6,27:105,28:24,29:9,30:16,31:58,32:66,33:84,34:32,35:16,36:22,37:48,38:62,39:38,40:92,41:34,42:18};
+const SRC_LOC = {'数码3C':'广东深圳','家居生活':'浙江台州','美妆个护':'广东广州','宠物用品':'浙江宁波','户外运动':'浙江义乌','厨房用品':'浙江永康','母婴用品':'广东汕头','服饰内衣':'广东广州','鞋靴':'福建泉州','文具办公':'浙江义乌','汽车用品':'广东广州','保健养生':'浙江金华','工具五金':'浙江永康','绿植园艺':'浙江金华','节庆派对':'浙江义乌','饰品配件':'浙江义乌'};
+const SRC_CHANNELS = [
+  {key:'1688', name:'1688(阿里巴巴)', icon:'📦', multi:1.00, moq:'2件起批', drop:'✅ 支持', eta:'48小时发货', rate:'★ 4.8', retail:false},
+  {key:'pdd',  name:'拼多多批发', icon:'🛒', multi:0.94, moq:'1件起批', drop:'✅ 支持', eta:'24小时发货', rate:'★ 4.6', retail:false},
+  {key:'ywg',  name:'义乌购', icon:'🏬', multi:1.06, moq:'3件起批', drop:'❌ 不支持', eta:'72小时发货', rate:'★ 4.5', retail:false},
+  {key:'ai',   name:'百度爱采购(厂家直供)', icon:'🏭', multi:0.88, moq:'100件起批', drop:'❌ 不支持', eta:'7天内分批', rate:'★ 4.4', retail:false},
+  {key:'tb',   name:'淘宝(零售参考价)', icon:'🛍️', multi:1.75, moq:'1件', drop:'—', eta:'现货即发', rate:'—', retail:true}
+];
+function prand(seed){ const x = Math.sin(seed * 12.9898) * 43758.5453; return x - Math.floor(x); }
+function strSeed(s){ let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h % 9973; }
+function srcPrice(base, seed, chIdx){
+  const j = 0.92 + prand(seed * 31 + chIdx * 17) * 0.16;
+  const p = base * SRC_CHANNELS[chIdx].multi * j;
+  return p >= 100 ? Math.round(p) : Math.round(p * 10) / 10;
+}
+const fmtP = p => p >= 100 ? '¥' + p : '¥' + p.toFixed(1);
+function kwInfo(p){
+  const k = KW[p.id];
+  return k ? {text:k[0], gbk:k[1]} : {text:p.name, gbk:null};
+}
+function chHref(key, kw){
+  if (key === '1688') return kw.gbk ? 'https://s.1688.com/selloffer/offer_search.htm?keywords=' + kw.gbk : 'https://www.1688.com';
+  if (key === 'pdd')  return 'https://pifa.pinduoduo.com';
+  if (key === 'ywg')  return 'https://www.yiwugo.com';
+  if (key === 'ai')   return 'https://b2b.baidu.com/s?word=' + encodeURIComponent(kw.text);
+  return 'https://s.taobao.com/search?q=' + encodeURIComponent(kw.text);
+}
+
+function renderSourcing(p){
+  const cost = SRC_COSTS[p.id] || p.__cost || 35;
+  const seed = SRC_COSTS[p.id] ? p.id : (p.__seed || 1);
+  const kw = kwInfo(p);
+  $('#srcCur').innerHTML = `📦 当前比价:<b>${p.emoji || ''} ${p.name}</b>(${p.cat})` + (SRC_COSTS[p.id] ? '' : ' · <span style="color:#b45309">自定义商品,数据为估算</span>');
+  const rows = SRC_CHANNELS.map((ch, idx)=>({ch, idx, price: srcPrice(cost, seed, idx)}));
+  const b2b = rows.filter(r=>!r.ch.retail);
+  const min = Math.min(...b2b.map(r=>r.price));
+  const maxB2b = Math.max(...b2b.map(r=>r.price));
+  const maxAll = Math.max(...rows.map(r=>r.price));
+  const bestCh = b2b.find(r=>r.price === min);
+  const retail = rows.find(r=>r.ch.retail);
+
+  $('#srcSummary').innerHTML = `
+    <div class="src-stat"><div class="m-num">${fmtP(min)}</div><div class="m-lbl">最低进货价 · ${bestCh.ch.name}</div></div>
+    <div class="src-stat"><div class="m-num">${fmtP(maxB2b - min)}</div><div class="m-lbl">批发渠道最大价差(选错渠道每件多花)</div></div>
+    <div class="src-stat"><div class="m-num">+${Math.round((retail.price/min - 1)*100)}%</div><div class="m-lbl">零售参考价相对最低批发价溢价</div></div>`;
+
+  $('#srcBars').innerHTML = rows.map(r=>`
+    <div class="bar-row">
+      <span>${r.ch.icon} ${r.ch.name}</span>
+      <div class="bar-track"><div class="bar-fill${r.ch.retail?' retail':''}" style="width:${Math.max(8, r.price/maxAll*100)}%"></div></div>
+      <span class="bp${r.price===min&&!r.ch.retail?' best':''}">${fmtP(r.price)}</span>
+    </div>`).join('');
+
+  $('#srcBody').innerHTML = rows.map(r=>{
+    const custom1688 = r.ch.key === '1688' && !kw.gbk;
+    const href = chHref(r.ch.key, kw);
+    return `
+    <tr class="${r.price===min&&!r.ch.retail?'best':''}">
+      <td class="ch-name">${r.ch.icon} ${r.ch.name}</td>
+      <td><b>${fmtP(r.price)}</b>${r.price===min&&!r.ch.retail?'<span class="price-badge">最低价</span>':''}</td>
+      <td>${r.ch.moq}</td>
+      <td>${r.ch.drop}</td>
+      <td>${SRC_LOC[p.cat] || '浙江义乌'}</td>
+      <td>${r.ch.eta}</td>
+      <td>${r.ch.rate}</td>
+      <td><a class="src-link${custom1688?' src-copy1688':''}" href="${href}" ${custom1688?`data-kw="${kw.text}"`:''} target="_blank" rel="noopener">${custom1688?'复制去1688 ↗':'去采购 ↗'}</a></td>
+    </tr>`;
+  }).join('');
+}
+
+/* 自定义商品:按关键词猜测品类与典型成本 */
+const GUESS_RULES = [
+  [/鞋|靴|拖鞋|凉鞋/i, '鞋靴', 50],
+  [/内衣|裤|衫|裙|衣|袜/i, '服饰内衣', 45],
+  [/充电|手机|耳机|音箱|电池|键盘|鼠标|平板|表/i, '数码3C', 70],
+  [/宠物|猫粮|狗粮|猫|狗/i, '宠物用品', 60],
+  [/杯|壶|锅|厨|餐具|炸|烤|榨|刀/i, '厨房用品', 60],
+  [/妆|美|护肤|面膜|精华|洗面|口红/i, '美妆个护', 25],
+  [/灯|家具|沙发|收纳|床|席/i, '家居生活', 35],
+  [/儿童|婴儿|宝宝|玩具|积木|辅食/i, '母婴用品', 40],
+  [/车载|汽车|车用/i, '汽车用品', 45],
+  [/健身|运动|瑜伽|露营|骑行|渔|球/i, '户外运动', 45],
+  [/泡脚|养生|保健|按摩|艾草|足/i, '保健养生', 50],
+  [/打印|笔|文具|办公|错题/i, '文具办公', 60],
+  [/工具|五金|电钻|扳手/i, '工具五金', 80],
+  [/花|园艺|种植|绿植/i, '绿植园艺', 30],
+  [/气球|派对|节日|圣诞|春联/i, '节庆派对', 15],
+  [/饰品|项链|手链|耳环|戒指/i, '饰品配件', 20]
+];
+function guessCat(term){
+  for (const [re, cat, cost] of GUESS_RULES) if (re.test(term)) return {cat, cost};
+  return {cat:'家居生活', cost:35};
+}
+function customProduct(term){
+  const g = guessCat(term);
+  return {id:'custom', name:term, cat:g.cat, __cost:g.cost, __seed:strSeed(term)};
+}
+
+const srcSelect = $('#srcProduct');
+srcSelect.innerHTML = PRODUCTS.map(p=>`<option value="${p.id}">${p.name}(${p.cat})</option>`).join('');
+srcSelect.addEventListener('change', ()=> renderSourcing(PRODUCTS.find(x=>x.id === +srcSelect.value)));
+document.querySelectorAll('.src-hot .chip-btn').forEach(btn=>btn.addEventListener('click', ()=>{
+  const p = PRODUCTS.find(x=>x.id === +btn.dataset.id);
+  srcSelect.value = p.id;
+  srcSearch.value = p.name;
+  renderSourcing(p);
+}));
+renderSourcing(PRODUCTS[0]);
+
+/* ---------- 比价搜索框 ---------- */
+const srcSearchForm = $('#srcSearchForm');
+const srcSearch = $('#srcSearch');
+const srcSuggest = $('#srcSuggest');
+function showSuggest(term){
+  if (!term){ srcSuggest.classList.remove('show'); return; }
+  const list = PRODUCTS.filter(p=>p.name.includes(term) || p.cat.includes(term) || (KW[p.id] && KW[p.id][0].includes(term))).slice(0,8);
+  const hasExact = list.some(p=>p.name === term);
+  srcSuggest.innerHTML =
+    list.map(p=>`<button type="button" data-id="${p.id}"><span>${p.emoji} ${p.name}</span><span class="sg-cat">${p.cat}</span></button>`).join('') +
+    (!hasExact ? `<button type="button" data-custom="1"><span class="sg-new">🔎 自定义比价:「${term}」</span><span class="sg-cat">按品类估算</span></button>` : '');
+  srcSuggest.classList.add('show');
+}
+srcSearch.addEventListener('input', ()=> showSuggest(srcSearch.value.trim()));
+srcSearch.addEventListener('focus', ()=> showSuggest(srcSearch.value.trim()));
+srcSuggest.addEventListener('click', e=>{
+  const btn = e.target.closest('button'); if (!btn) return;
+  e.preventDefault();
+  if (btn.dataset.custom){
+    const term = srcSearch.value.trim(); if (!term) return;
+    srcSuggest.classList.remove('show');
+    renderSourcing(customProduct(term));
+    showToast('🔎 已生成「' + term + '」的自定义比价(按品类估算,演示数据)');
+  } else {
+    const p = PRODUCTS.find(x=>x.id === +btn.dataset.id);
+    srcSelect.value = p.id;
+    srcSearch.value = p.name;
+    renderSourcing(p);
+    srcSuggest.classList.remove('show');
+  }
+});
+srcSearchForm.addEventListener('submit', e=>{
+  e.preventDefault();
+  const term = srcSearch.value.trim(); if (!term) return;
+  const match = PRODUCTS.find(p=>p.name === term)
+    || PRODUCTS.find(p=>p.name.includes(term) || term.includes(p.name) || (KW[p.id] && KW[p.id][0].includes(term)));
+  if (match){
+    srcSelect.value = match.id;
+    renderSourcing(match);
+    showToast('已匹配到站内商品:' + match.name);
+  } else {
+    renderSourcing(customProduct(term));
+    showToast('🔎 已生成「' + term + '」的自定义比价(按品类估算,演示数据)');
+  }
+  srcSuggest.classList.remove('show');
+});
+document.addEventListener('click', e=>{
+  if (!e.target.closest('.src-search')) srcSuggest.classList.remove('show');
+});
+$('#srcBody').addEventListener('click', e=>{
+  const a = e.target.closest('a.src-copy1688'); if (!a) return;
+  e.preventDefault();
+  copyText(a.dataset.kw).then(()=>{
+    showToast('✅ 已复制「' + a.dataset.kw + '」,1688 已在新窗口打开,粘贴搜索即可');
+    window.open('https://www.1688.com', '_blank');
+  });
+});
+
+/* ---------- 开店清单 ---------- */
+const STORE_KEY = 'xp-checklist';
+let saved = [];
+try { saved = JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch(e){}
+document.querySelectorAll('#checklist input').forEach(cb => { cb.checked = !!saved[cb.dataset.i]; });
+function updateChecklist(){
+  const boxes = [...document.querySelectorAll('#checklist input')];
+  const done = boxes.filter(b=>b.checked).length;
+  $('#ckBar').style.width = done / boxes.length * 100 + '%';
+  $('#ckText').textContent = `已完成 ${done} / ${boxes.length}` + (done === boxes.length ? ' · 准备就绪,可以开店了!🎉' : '');
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(boxes.map(b=>b.checked))); } catch(e){}
+}
+document.querySelectorAll('#checklist input').forEach(cb => cb.addEventListener('change', updateChecklist));
+updateChecklist();
+
+/* ---------- 数字滚动 ---------- */
+function countUp(el){
+  const target = +el.dataset.count, suffix = el.dataset.suffix || '';
+  const t0 = performance.now(), dur = 1400;
+  (function tick(t){
+    const p = Math.min(1, (t - t0) / dur), ease = 1 - Math.pow(1-p, 3);
+    el.textContent = Math.round(target * ease) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  })(t0);
+}
+const countObs = new IntersectionObserver((es,obs)=>{
+  es.forEach(e=>{ if(e.isIntersecting){ countUp(e.target); obs.unobserve(e.target); } });
+},{threshold:.4});
+document.querySelectorAll('.stats .num').forEach(el => countObs.observe(el));
+
+/* ---------- 滚动显现 & 导航 ---------- */
+const io = new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+const nav = $('#nav');
+addEventListener('scroll', ()=> nav.classList.toggle('scrolled', scrollY > 30), {passive:true});
+$('#burger').addEventListener('click', ()=> $('#navMenu').classList.toggle('open'));
+document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', ()=> $('#navMenu').classList.remove('open')));
+
+/* ---------- 初始化 ---------- */
+renderGrid();
+renderBlueList();
