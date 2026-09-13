@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智选 XuanPinHub · 电商选品数据平台</title>
+<meta name="description" content="数据驱动的电商选品平台:趋势榜单、蓝海雷达、利润计算器与开店准备指南,助你用数据找到下一个爆款。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<!-- ============ 导航 ============ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner container">
+    <a class="logo" href="#home">🧭 智选 <span>XuanPinHub</span></a>
+    <div class="nav-links" id="navMenu">
+      <a href="#trending">趋势榜单</a>
+      <a href="#radar">蓝海雷达</a>
+      <a href="#calc">利润计算器</a>
+      <a href="#sourcing">货源比价</a>
+      <a href="#method">选品方法论</a>
+      <a href="#guide">开店指南</a>
+      <a class="nav-cta" href="#trending">开始选品</a>
+    </div>
+    <button class="burger" id="burger" aria-label="菜单">☰</button>
+  </div>
+</nav>
+
+<!-- ============ Hero ============ -->
+<header class="hero" id="home">
+  <div class="container hero-inner">
+    <div class="badge reveal">⚡ 2026 内贸 &amp; 跨境电商选品数据平台</div>
+    <h1 class="reveal">用数据找到你的<span class="grad">下一个爆款</span></h1>
+    <p class="hero-sub reveal">汇聚多平台销量、搜索与竞争数据,从趋势发现、蓝海雷达到利润测算,一站式完成选品决策。</p>
+    <form class="search reveal" id="searchForm">
+      <input id="searchInput" type="text" placeholder="搜索品类或产品,如「磁吸充电宝」「宠物」「露营」…" autocomplete="off">
+      <button type="submit">🔍 立即选品</button>
+    </form>
+    <div class="hero-note reveal">支持品类筛选 · 利润测算 · 竞争评估,数据每日更新</div>
+    <div class="stats reveal">
+      <div class="stat"><div class="num" data-count="12" data-suffix="+">0</div><div class="lbl">覆盖电商平台</div></div>
+      <div class="stat"><div class="num" data-count="860" data-suffix="万+">0</div><div class="lbl">追踪在售商品</div></div>
+      <div class="stat"><div class="num" data-count="320" data-suffix="万">0</div><div class="lbl">日均数据更新</div></div>
+      <div class="stat"><div class="num" data-count="5" data-suffix="万+">0</div><div class="lbl">服务卖家数量</div></div>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ============ 趋势榜单 ============ -->
+<section class="section" id="trending">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="kicker">TRENDING · 爆品发现</div>
+      <h2>趋势榜单 <span class="accent">近 30 天飙升好物</span></h2>
+      <p class="sec-sub">综合搜索增速、销量爬升与社媒声量计算热度指数,点击卡片查看选品分析。</p>
+    </div>
+    <div class="tabs reveal" id="tabs">
+      <button class="tab active" data-cat="全部">全部</button>
+      <button class="tab" data-cat="家居生活">家居生活</button>
+      <button class="tab" data-cat="数码3C">数码3C</button>
+      <button class="tab" data-cat="美妆个护">美妆个护</button>
+      <button class="tab" data-cat="宠物用品">宠物用品</button>
+      <button class="tab" data-cat="户外运动">户外运动</button>
+      <button class="tab" data-cat="厨房用品">厨房用品</button>
+      <button class="tab" data-cat="母婴用品">母婴用品</button>
+      <button class="tab" data-cat="服饰内衣">服饰内衣</button>
+      <button class="tab" data-cat="鞋靴">鞋靴</button>
+      <button class="tab" data-cat="文具办公">文具办公</button>
+      <button class="tab" data-cat="汽车用品">汽车用品</button>
+      <button class="tab" data-cat="保健养生">保健养生</button>
+      <button class="tab" data-cat="工具五金">工具五金</button>
+      <button class="tab" data-cat="绿植园艺">绿植园艺</button>
+      <button class="tab" data-cat="节庆派对">节庆派对</button>
+      <button class="tab" data-cat="饰品配件">饰品配件</button>
+    </div>
+    <div class="result-note" id="resultNote">📌 近 30 天综合热度排序 · 演示数据,仅供选品方法参考</div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<!-- ============ 蓝海雷达 ============ -->
+<section class="section alt" id="radar">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="kicker">BLUE OCEAN · 机会雷达</div>
+      <h2>蓝海雷达 <span class="accent">低竞争 × 高需求</span></h2>
+      <p class="sec-sub">横轴为竞争指数,纵轴为需求指数(搜索热度),气泡大小代表市场规模。左上角「蓝海机会区」的品类值得优先研究。</p>
+    </div>
+    <div class="radar-wrap reveal">
+      <div class="panel radar-chart">
+        <div class="chart-box"><canvas id="scatterChart"></canvas></div>
+      </div>
+      <aside class="panel radar-side">
+        <h3>🔥 今日蓝海机会 TOP5</h3>
+        <div id="blueList"></div>
+        <p class="side-tip">判断蓝海:需求在涨(搜索增速 &gt; 20%)、竞争未饱和(头部垄断度低)、利润空间足(毛利 ≥ 40%)。</p>
+      </aside>
+    </div>
+    <div class="panel chart-panel reveal">
+      <div class="panel-head">
+        <h3>📈 近 12 个月品类热度走势</h3>
+        <div class="line-btns" id="lineBtns">
+          <button class="tab active" data-key="磁吸充电宝">磁吸充电宝</button>
+          <button class="tab" data-key="宠物智能用品">宠物智能用品</button>
+          <button class="tab" data-key="露营户外装备">露营户外装备</button>
+        </div>
+      </div>
+      <div class="chart-box tall"><canvas id="lineChart"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 利润计算器 ============ -->
+<section class="section" id="calc">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="kicker">PROFIT · 算清再进货</div>
+      <h2>利润计算器 <span class="accent">先算账,再下单</span></h2>
+      <p class="sec-sub">参考 Jungle Scout 利润计算器思路:把进货、物流、佣金、广告全部摊进单件成本,毛利低于 25% 的品要谨慎。</p>
+    </div>
+    <div class="calc-wrap reveal">
+      <form class="panel calc-form" id="calcForm">
+        <div class="presets">
+          <span>示例数据:</span>
+          <button type="button" class="chip-btn" data-preset="129,38,8,5,12,8000">磁吸充电宝</button>
+          <button type="button" class="chip-btn" data-preset="269,95,18,5,25,3000">宠物喂食器</button>
+          <button type="button" class="chip-btn" data-preset="249,128,15,5,30,2600">空气炸锅</button>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>客单价 / 售价(¥)</label><input type="number" id="cPrice" value="129" min="1"></div>
+          <div class="field"><label>进货成本(¥)</label><input type="number" id="cCost" value="38" min="0"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>快递 / 头程物流(¥)</label><input type="number" id="cShip" value="8" min="0"></div>
+          <div class="field"><label>平台佣金率(%)</label><input type="number" id="cComm" value="5" min="0" max="100"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>单均广告费(¥)</label><input type="number" id="cAd" value="12" min="0"></div>
+          <div class="field"><label>预估月销量(件)</label><input type="number" id="cVol" value="8000" min="0"></div>
+        </div>
+        <p class="form-tip">💡 经验值:国内快递 3-8 元/单,平台佣金 0.6%-8%(跨境另含收款汇损约 1%-2%),广告占比建议 ≤ 售价 15%。</p>
+      </form>
+      <div class="panel calc-result">
+        <div class="res-top">
+          <div class="ring" id="marginRing"><div class="val"><b id="oMargin">40</b><i>%</i><span>毛利率</span></div></div>
+          <div class="res-main">
+            <div class="res-lbl">单件净利润</div>
+            <div class="res-big" id="oProfit">¥ 0</div>
+            <div class="health-badge" id="healthBadge">—</div>
+          </div>
+        </div>
+        <div class="res-grid">
+          <div class="m"><div class="m-num" id="oMonth">¥ 0</div><div class="m-lbl">预估月净利</div></div>
+          <div class="m"><div class="m-num" id="oRoi">0%</div><div class="m-lbl">单件投入回报率</div></div>
+          <div class="m"><div class="m-num" id="oCostAll">¥ 0</div><div class="m-lbl">单件总成本</div></div>
+          <div class="m"><div class="m-num" id="oBreakeven">0 件</div><div class="m-lbl">1万元固定投入回本量</div></div>
+        </div>
+        <p class="form-tip" id="calcAdvice"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 货源比价 ============ -->
+<section class="section alt" id="sourcing">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="kicker">SOURCING · 一键比价</div>
+      <h2>货源比价 <span class="accent">多渠道进货价对比</span></h2>
+      <p class="sec-sub">同一商品在 1688、拼多多批发、义乌购、百度爱采购等渠道的进货价对比,自动标出最低价渠道与价差,采购链接一键直达。</p>
+    </div>
+    <div class="panel reveal">
+      <div class="src-bar">
+        <form class="src-search" id="srcSearchForm" autocomplete="off">
+          <input id="srcSearch" type="text" placeholder="🔍 搜索商品或输入任意品名自定义比价,如「篮球鞋」「手机壳」…">
+          <button type="submit" class="src-go">比价</button>
+          <div class="src-suggest" id="srcSuggest"></div>
+        </form>
+        <label for="srcProduct">或选择商品:</label>
+        <select id="srcProduct"></select>
+        <div class="src-hot">热门:
+          <button class="chip-btn" data-id="1">磁吸充电宝</button>
+          <button class="chip-btn" data-id="2">宠物喂食器</button>
+          <button class="chip-btn" data-id="14">空气炸锅</button>
+          <button class="chip-btn" data-id="25">折叠泡脚桶</button>
+        </div>
+      </div>
+      <div class="src-cur" id="srcCur"></div>
+      <div class="src-summary" id="srcSummary"></div>
+      <div class="src-bars" id="srcBars"></div>
+      <div class="ptable-wrap">
+        <table class="src-table">
+          <thead><tr><th>渠道</th><th>单件进货价</th><th>起批量</th><th>一件代发</th><th>发货地</th><th>时效</th><th>评分</th><th>采购</th></tr></thead>
+          <tbody id="srcBody"></tbody>
+        </table>
+      </div>
+      <p class="form-tip" style="margin-top:14px">💡 价格为演示数据(基于该品类典型进货成本推算),实际以各渠道实时报价为准;1688 搜索需登录账号。采购前记得先拿样比价,并把运费算进总价。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 选品方法论 ============ -->
+<section class="section" id="method">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="kicker">METHODOLOGY · 五步选品法</div>
+      <h2>选品方法论 <span class="accent">像专业卖家一样思考</span></h2>
+      <p class="sec-sub">综合 Helium 10「Black Box」验证流程与国内实战打法,五步筛掉 90% 的伪机会。</p>
+    </div>
+    <div class="method-grid reveal">
+      <div class="step"><div class="step-photo" data-emoji="📈"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=520&q=70" alt="趋势数据看板" loading="lazy" onerror="this.parentElement.classList.add('noimg')"></div><div class="step-num">01</div><h3>看趋势</h3><p>Google Trends、抖音热点榜、平台旺季日历,找处于上升期的品类,避开已过峰值的昙花品。</p></div>
+      <div class="step"><div class="step-photo" data-emoji="🔍"><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=520&q=70" alt="需求调研" loading="lazy" onerror="this.parentElement.classList.add('noimg')"></div><div class="step-num">02</div><h3>测需求</h3><p>搜索量、销量天花板、复购率三重验证,确认是「真需求」而不是短期猎奇。</p></div>
+      <div class="step"><div class="step-photo" data-emoji="🧮"><img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=520&q=70" alt="利润核算" loading="lazy" onerror="this.parentElement.classList.add('noimg')"></div><div class="step-num">03</div><h3>算利润</h3><p>目标毛利 ≥ 40%,客单价适中(国内 50-300 元 / 跨境 $15-70),物流成本占售价 ≤ 15%。</p></div>
+      <div class="step"><div class="step-photo" data-emoji="♟️"><img src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=520&q=70" alt="竞争分析" loading="lazy" onerror="this.parentElement.classList.add('noimg')"></div><div class="step-num">04</div><h3>评竞争</h3><p>看头部 Listing 评论数、品牌垄断度与广告竞价,300 条评论以内入场,红海类目不硬刚。</p></div>
+      <div class="step"><div class="step-photo" data-emoji="🏭"><img src="https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=520&q=70" alt="供应链仓库" loading="lazy" onerror="this.parentElement.classList.add('noimg')"></div><div class="step-num">05</div><h3>验供应链</h3><p>1688 比价拿样,确认货源稳定、无侵权风险、适配物流(重量 / 带电 / 易碎),再下试单。</p></div>
+    </div>
+    <div class="risk-box reveal">
+      <h3>⚠️ 新手避坑清单</h3>
+      <div class="risk-chips">
+        <span class="chip">外观 / 专利侵权</span><span class="chip">带电产品认证(3C / CE / UN38.3)</span><span class="chip">大件重货运费高</span><span class="chip">易碎品售后率高</span><span class="chip">强季节性压货</span><span class="chip">低客单无利润</span><span class="chip">平台禁售类目</span><span class="chip">网红昙花品</span><span class="chip">白牌价格战</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 开店指南 ============ -->
+<section class="section" id="guide">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="kicker">ROADMAP · 开店准备</div>
+      <h2>开店准备清单 <span class="accent">从 0 到出单的 8 步</span></h2>
+      <p class="sec-sub">做电商前需要准备的 8 件事,按顺序推进。点击勾选记录进度,自动保存在本地浏览器。</p>
+    </div>
+    <div class="guide-wrap reveal">
+      <ul class="checklist" id="checklist">
+        <li class="ck"><label><input type="checkbox" data-i="0"><div><b>1. 定位与平台选择</b><span>确定类目、目标人群与主战场(个人起步:闲鱼 / 得物 / 小红书;进阶:淘宝 / 拼多多 / 抖店;跨境:亚马逊 / TikTok Shop / Temu),小成本试错再加大投入。</span></div></label></li>
+        <li class="ck"><label><input type="checkbox" data-i="1"><div><b>2. 证照与合规</b><span>个体户或公司营业执照;食品、化妆品等类目需经营许可;跨境需对公账户与收款工具(连连 / PingPong 等)。</span></div></label></li>
+        <li class="ck"><label><input type="checkbox" data-i="2"><div><b>3. 资金规划</b><span>备货金 + 物流费 + 平台保证金 + 推广预算,并预留 3 个月周转金;先算账再进货,不押全部身家。</span></div></label></li>
+        <li class="ck"><label><input type="checkbox" data-i="3"><div><b>4. 货源与供应链</b><span>1688 / 工厂拿样对比,一件代发起步验证需求,稳定后小批量备货,锁定 2-3 家备用供应商。</span></div></label></li>
+        <li class="ck"><label><input type="checkbox" data-i="4"><div><b>5. 店铺与内容搭建</b><span>品牌名、Logo、主图、详情页 / Listing——视觉与卖点文案直接决定转化率,值得花预算。</span></div></label></li>
+        <li class="ck"><label><input type="checkbox" data-i="5"><div><b>6. 营销与冷启动</b><span>站内广告测款、达人带货、社媒种草三件套,目标是快速积累首批销量与评价。</span></div></label></li>
+        <li class="ck"><label><input type="checkbox" data-i="6"><div><b>7. 物流与售后</b><span>快递比价签约、承诺发货时效、建立退换货 SOP——售后体验决定店铺评分与复购。</span></div></label></li>
+        <li class="ck"><label><input type="checkbox" data-i="7"><div><b>8. 数据化运营</b><span>用生意参谋 / 蝉妈妈 / 卖家精灵 / Helium 10 等工具每周复盘,持续迭代选品、定价与投放。</span></div></label></li>
+      </ul>
+      <aside class="panel guide-side">
+        <h3>✅ 准备进度</h3>
+        <div class="progress"><div class="bar-inner" id="ckBar"></div></div>
+        <div class="ck-text" id="ckText">已完成 0 / 8</div>
+        <table class="ptable">
+          <thead><tr><th>平台</th><th>适合人群</th><th>起步资金</th></tr></thead>
+          <tbody>
+            <tr><td>闲鱼</td><td>零成本练手 / 代发</td><td>0 元</td></tr>
+            <tr><td>得物(个人挂牌)</td><td>球鞋潮品吃价差</td><td>0 元保证金</td></tr>
+            <tr><td>淘宝个人店</td><td>全品类长线经营</td><td>0 元起</td></tr>
+            <tr><td>拼多多个人店</td><td>低价白牌走量</td><td>0 元</td></tr>
+            <tr><td>抖音个人店</td><td>短视频 / 直播带货</td><td>数百-2千</td></tr>
+            <tr><td>小红书个人店</td><td>图文种草 / 女性向</td><td>0 元起</td></tr>
+          </tbody>
+        </table>
+        <h3 class="sub-h">进阶 · 企业 / 跨境</h3>
+        <table class="ptable">
+          <thead><tr><th>平台</th><th>适合人群</th><th>起步资金</th></tr></thead>
+          <tbody>
+            <tr><td>淘宝 / 天猫</td><td>全品类成熟运营</td><td>2-10 万</td></tr>
+            <tr><td>抖音小店</td><td>内容驱动新消费</td><td>3-15 万</td></tr>
+            <tr><td>亚马逊</td><td>跨境精品 / 品牌</td><td>15-40 万</td></tr>
+            <tr><td>TikTok Shop</td><td>跨境内容电商</td><td>8-20 万</td></tr>
+            <tr><td>Temu / SHEIN</td><td>供货 / 托管模式</td><td>5-15 万</td></tr>
+          </tbody>
+        </table>
+        <p class="side-tip">个人起步资金含首批备货 + 前期推广;得物个人挂牌无保证金但按成交收服务费(约 10%-15%),具体以各平台 App 内最新公示为准。</p>
+      </aside>
+    </div>
+    <div class="panel roadmap-box reveal">
+      <h3>🚀 个人卖家三步走(轻资产路径,预算 3000 元-1 万)</h3>
+      <div class="rm-grid">
+        <div class="rm-step"><div class="rm-tag">第 1 步 · 第 1 个月</div><b>闲鱼练手 · 零成本</b><p>支付宝实名即可开卖,用 1688 一件代发起步,练选品、客服、发货全流程;同时在得物观察目标品类的行情价曲线。</p></div>
+        <div class="rm-step"><div class="rm-tag">第 2 步 · 第 2-3 个月</div><b>得物挂牌 · 吃价差</b><p>有球鞋 / 潮品货源就在得物「我要卖」挂牌:利润 = 成交价 − 进货价 − 服务费。必须正品、全新、鞋盒吊牌配件齐全,优先选成交量大、价格稳的款。</p></div>
+        <div class="rm-step"><div class="rm-tag">第 3 步 · 跑通后</div><b>办照放大 · 选主阵地</b><p>办理个体户执照后规模化:能出镜做内容 → 抖音;稳扎稳打 → 淘宝;球鞋货源有优势 → 得物商家版;持续经营按《电商法》需执照。</p></div>
+      </div>
+      <p class="side-tip" style="margin-top:14px">⚠️ 得物要点:查验中心模式(售出后先寄查验中心,通过再发给买家),回款在买家收货后,注意资金周转节奏;炒作款价格波动大,新手避开;卖假会被扣分封号且有法律风险。</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="f-logo">🧭 智选 <span>XuanPinHub</span></div>
+    <p>数据驱动的电商选品平台 · 趋势榜单 / 蓝海雷达 / 利润测算 / 开店指南</p>
+    <p class="f-note">本站为选品方法演示,所有商品数据均为模拟样例 · 设计灵感参考 Jungle Scout / Helium 10 / Sell The Trend / 卖家精灵等优秀选品工具</p>
+  </div>
+</footer>
+
+<!-- ============ 商品详情弹窗 ============ -->
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-photo" id="mPhoto"></div>
+    <div class="modal-head">
+      <div class="icon-tile" id="mIcon">📦</div>
+      <div>
+        <h3 id="mName">产品名</h3>
+        <div id="mTags"></div>
+      </div>
+    </div>
+    <p class="m-desc" id="mDesc"></p>
+    <div class="m-metrics" id="mMetrics"></div>
+    <div class="m-risk" id="mRisk"></div>
+    <div class="m-actions">
+      <a class="btn-primary" id="mLink" href="#" target="_blank" rel="noopener">去 1688 找货源 ↗</a>
+      <button class="btn-ghost" id="mCopy">复制关键词</button>
+    </div>
+    <p class="form-tip" style="margin-top:12px">💡 1688 搜索结果页需要登录账号：首次打开会跳转登录页，登录后会自动回到搜索结果；也可复制关键词后去 1688 手动搜索。</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="assets/main.js"></script>
+</body>
+</html>
