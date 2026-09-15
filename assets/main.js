@@ -430,7 +430,7 @@ function renderGrid(){
   $('#pgNext').onclick = ()=>{ page++; renderGrid(); document.getElementById('trending').scrollIntoView({behavior:'smooth'}); };
   resultNote.textContent = currentTerm
     ? `🔍 搜索“${currentTerm}”找到 ${list.length} 件 · 第 ${page}/${pages} 页`
-    : `📌 商品库共 ${ALL.length} 件 = 精选实拍 ${PRODUCTS.length} 件 + 品牌库生成 ${GEN.length} 件,每页 ${PAGE_SIZE} 件 · 演示数据`;
+    : `📌 ${currentCat==='全部' ? `商品库共 ${ALL.length} 件 = 精选实拍 ${PRODUCTS.length} 件 + 品牌库生成 ${GEN.length} 件` : `「${currentCat}」类目共 ${list.length} 件`},每页 ${PAGE_SIZE} 件 · 演示数据`;
 }
 
 $('#tabs').addEventListener('click', e=>{
@@ -489,6 +489,7 @@ grid.addEventListener('click', e=>{
     mLink.href = 'https://www.1688.com';
     mLink.textContent = '复制关键词去1688 ↗';
   }
+  $('#mCopy').style.display = kw[1] ? '' : 'none';
   $('#mCopy').dataset.kw = kw[0];
   modal.classList.add('open');
 });
