@@ -80,6 +80,16 @@ nav,header,main,footer{position:relative;z-index:1}
 .tab.active{background:linear-gradient(90deg,rgba(5,150,105,.12),rgba(8,145,178,.12));border-color:rgba(5,150,105,.45);color:#047857;font-weight:700}
 .result-note{color:#64748b;font-size:13.5px;margin-bottom:18px}
 
+/* ============ 分页 & 品牌标签 ============ */
+.pager{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:26px}
+.pager button{padding:9px 22px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--text);font-size:14px;font-weight:600;transition:.2s}
+.pager button:hover:not(:disabled){border-color:rgba(5,150,105,.5);color:#047857}
+.pager button:disabled{opacity:.4;cursor:not-allowed}
+.pager span{font-size:13.5px;color:var(--muted)}
+.brand-tag{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.9);backdrop-filter:blur(6px);color:#334155;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;box-shadow:0 2px 8px rgba(15,23,42,.2)}
+.feat-badge{position:absolute;top:10px;right:10px;background:#047857;color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;box-shadow:0 2px 8px rgba(15,23,42,.25)}
+.card-photo.noimg::after{font-size:56px}
+
 /* ============ 商品卡片(实拍主图) ============ */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:18px}
 .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px 16px 20px;cursor:pointer;transition:transform .25s,border-color .25s,box-shadow .25s;box-shadow:var(--shadow)}
